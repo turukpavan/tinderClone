@@ -1,4 +1,4 @@
-package com.tinderclone
+package com.pavanturuk.tinderclone
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
