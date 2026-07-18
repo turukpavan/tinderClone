@@ -9,6 +9,7 @@ import {
   TextInputKeyPressEventData,
 } from 'react-native';
 import { COLORS } from '../constants/colors';
+import { s, vs, ms } from '../utils/scaling';
 
 type OtpChannel = 'phone' | 'email';
 
@@ -168,6 +169,7 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
     </View>
   );
 };
+export default OtpVerificationScreen;
 
 const BOX_SIZE = 40;
 
@@ -175,33 +177,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.BACKGROUND_DARK,
-    paddingHorizontal: 24,
-    paddingTop: 16,
+    paddingHorizontal: s(24),
+    paddingTop: vs(16),
   },
+
   backButton: {
-    width: 40,
-    height: 40,
+    width: ms(40),
+    height: ms(40),
     justifyContent: 'center',
   },
+
   backArrow: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 28,
+    fontSize: ms(28),
     fontWeight: '600',
   },
+
   title: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 32,
+    fontSize: ms(32),
     fontWeight: '800',
-    marginTop: 24,
+    marginTop: vs(24),
   },
+
   subtitleContainer: {
-    marginTop: 16,
+    marginTop: vs(16),
   },
+
   subtitle: {
     color: COLORS.COLOR_SUBTITLE,
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: ms(16),
+    lineHeight: vs(22),
   },
+
   subtitleBold: {
     color: COLORS.COLOR_LIGHT,
     fontWeight: '700',
@@ -209,64 +217,74 @@ const styles = StyleSheet.create({
 
   otpRow: {
     flexDirection: 'row',
-    marginTop: 40,
+    marginTop: vs(40),
   },
+
   otpBoxWrapper: {
-    width: BOX_SIZE,
-    marginRight: 16,
+    width: ms(BOX_SIZE),
+    marginRight: s(16),
     alignItems: 'center',
   },
+
   otpInput: {
-    width: BOX_SIZE,
-    height: 44,
+    width: ms(BOX_SIZE),
+    height: vs(44),
     color: COLORS.BACKGROUND_LIGHT,
-    fontSize: 22,
+    fontSize: ms(22),
     textAlign: 'center',
     padding: 0,
   },
+
   underline: {
     width: '100%',
-    height: 2,
-    borderRadius: 1,
-    marginTop: 4,
+    height: vs(2),
+    borderRadius: ms(1),
+    marginTop: vs(4),
   },
+
   underlineActive: {
     backgroundColor: COLORS.ACTIVE_OTPUNDERLINE,
   },
+
   underlineInactive: {
     backgroundColor: COLORS.INACTIVE_OTPUNDERLINE,
   },
+
   resendLink: {
-    color:COLORS.COLOR_LINK,
-    fontSize: 16,
+    color: COLORS.COLOR_LINK,
+    fontSize: ms(16),
     fontWeight: '700',
-    marginTop: 20,
+    marginTop: vs(20),
   },
+
   helperText: {
-    color: '#8A8A8A',
-    fontSize: 15,
-    marginTop: 32,
-    lineHeight: 20,
+    color: COLORS.COLOR_PLACEHOLDER,
+    fontSize: ms(15),
+    marginTop: vs(32),
+    lineHeight: vs(20),
   },
+
   nextButton: {
-    marginTop: 24,
-    height: 52,
-    borderRadius: 26,
+    marginTop: vs(24),
+    height: vs(52),
+    borderRadius: ms(26),
     backgroundColor: COLORS.BACKGROUND_NXTBTN,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   nextButtonActive: {
     backgroundColor: COLORS.BACKGROUND_RED,
   },
+
   nextButtonText: {
     color: COLORS.COLOR_NXTBTN,
-    fontSize: 16,
+    fontSize: ms(16),
     fontWeight: '700',
   },
+
   nextButtonTextActive: {
     color: COLORS.BACKGROUND_LIGHT,
   },
 });
 
-export default OtpVerificationScreen;

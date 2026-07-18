@@ -4,13 +4,22 @@ import {
   StyleSheet,
   Image,
   StatusBar,
+  Dimensions,
   useColorScheme,
   ActivityIndicator,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import Swiper from 'react-native-deck-swiper';
 import { COLORS } from '../constants/colors';
-import { createMatchIfExists, getAllUsers, saveSwipe } from '../services/userService';
+import {
+  createMatchIfExists,
+  getAllStackUsers,
+  saveSwipe,
+} from '../services/userService';
+import { s, vs, ms } from 'react-native-size-matters';
+
+const { width, height } = Dimensions.get('window');
 type User = {
   id: string;
   profileImage: string;
@@ -21,39 +30,52 @@ type User = {
 const StackScreen = () => {
   const [users, setUser] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const isDarkMode = useColorScheme() === 'light';
+  const isDarkMode = useColorScheme() === 'dark';
 
-  useEffect(() => {
-    const getUserData = async () => {
+   const getUserData = async () => {
       setLoading(true);
-      const data = await getAllUsers();
+      const data = await getAllStackUsers();
       setUser(data);
       setLoading(false);
       console.log(data);
     };
+  useFocusEffect(
+  useCallback(() => {
     getUserData();
-  }, []);
+  }, []),
+);
+ 
   const renderCard = (card?: User) => {
     if (!card) {
       return (
-        <View style={styles.card}>
-          <Text>No more users</Text>
-        </View>
+        <View style={styles.emptyContainer}>
+  <Text style={styles.emptyTitle}>
+    No more profiles
+  </Text>
+
+  <Text style={styles.emptySubtitle}>
+    Check back later for new matches.
+  </Text>
+</View>
       );
     }
 
     return (
       <View style={styles.card}>
-        <Image source={{ uri: card.profileImage }} style={styles.cardImg} />
-
+        <Image
+          source={{
+            uri: card.profileImage || 'https://via.placeholder.com/400',
+          }}
+          style={styles.cardImg}
+        />
         <View style={styles.overlay} />
 
         <View style={styles.infoContainer}>
-          <Text style={styles.name}>{card.name}</Text>
+          <Text style={styles.name}>{card.name || 'Unknown'}</Text>
 
-          <Text style={styles.city}>{card.city}</Text>
+          <Text style={styles.city}>{card.city || 'Unknown city'}</Text>
 
-          <Text style={styles.caption}>{card.caption}</Text>
+          <Text style={styles.caption}>{card.caption || 'No caption'}</Text>
         </View>
       </View>
     );
@@ -101,6 +123,44 @@ const StackScreen = () => {
 
                 saveSwipe(passedUser.id, 'passes');
               }}
+              overlayLabels={{
+                left: {
+                  title: 'NOPE',
+                  style: {
+                    label: {
+                      borderColor: 'red',
+                      color: 'red',
+                      borderWidth: 4,
+                      fontSize: 32,
+                    },
+                    wrapper: {
+                      flexDirection: 'column',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-start',
+                      marginTop: 30,
+                      marginLeft: -30,
+                    },
+                  },
+                },
+                right: {
+                  title: 'LIKE',
+                  style: {
+                    label: {
+                      borderColor: 'green',
+                      color: 'green',
+                      borderWidth: 4,
+                      fontSize: 32,
+                    },
+                    wrapper: {
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      justifyContent: 'flex-start',
+                      marginTop: 30,
+                      marginLeft: 30,
+                    },
+                  },
+                },
+              }}
             />
           </View>
         </>
@@ -115,31 +175,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.BACKGROUND_LIGHT,
   },
+
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   header: {
-    height: 80,
+    height: vs(80),
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: s(20),
+    paddingTop: StatusBar.currentHeight || 0,
   },
+
   heroTxt: {
     color: COLORS.BACKGROUND_RED,
-    fontSize: 20,
+    fontSize: ms(24),
     fontWeight: '900',
   },
 
   swiperContainer: {
     flex: 1,
+    paddingHorizontal: s(12),
+    paddingBottom: vs(20),
   },
 
   card: {
-    width: '100%',
-    height: '80%',
-    borderRadius: 24,
+    width: width - s(24),
+    height: height * 0.75,
+    borderRadius: ms(24),
     overflow: 'hidden',
+    alignSelf: 'center',
   },
 
   cardImg: {
@@ -149,37 +216,58 @@ const styles = StyleSheet.create({
 
   overlay: {
     position: 'absolute',
+    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    height: '100%',
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: COLORS.CARD_OVERLAY,
   },
 
   infoContainer: {
     position: 'absolute',
-    left: 20,
-    right: 20,
-    bottom: 24,
+    left: s(20),
+    right: s(20),
+    bottom: vs(24),
   },
 
   name: {
-    color: '#fff',
-    fontSize: 30,
+    color: COLORS.COLOR_WHITE,
+    fontSize: ms(30),
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: vs(4),
   },
 
   city: {
-    color: '#fff',
-    fontSize: 18,
+    color: COLORS.COLOR_WHITE,
+    fontSize: ms(18),
     fontWeight: '500',
-    marginBottom: 8,
+    marginBottom: vs(8),
   },
 
   caption: {
-    color: '#fff',
-    fontSize: 16,
-    lineHeight: 22,
+    color: COLORS.COLOR_WHITE,
+    fontSize: ms(16),
+    lineHeight: vs(22),
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: s(24),
+  },
+
+  emptyTitle: {
+    fontSize: ms(24),
+    fontWeight: '700',
+    color: COLORS.COLOR_DARK,
+  },
+
+  emptySubtitle: {
+    marginTop: vs(10),
+    color: COLORS.COLOR_TEXT_TERTIARY,
+    fontSize: ms(16),
+    textAlign: 'center',
+    lineHeight: vs(24),
   },
 });

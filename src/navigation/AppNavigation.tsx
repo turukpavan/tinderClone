@@ -10,11 +10,18 @@ import { RootStackParamList } from '../navigation/navigation';
 import OtpScreen from '../screens/OtpScreen';
 import BottomTabs from './BottomTabs';
 import ProfilePictureUploadScreen from '../screens/ProfilePictureUploadScreen ';
+import UpdateProfileScreen from '../screens/UpdateProfileScreen';
+import ChatRoomScreen from '../screens/ChatRoomScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigation = () => {
   return (
+      <SafeAreaView
+          style={{ flex: 1 }}
+          edges={['top']}>
+
     <Stack.Navigator
       initialRouteName={ROUTES.LOGIN}
       screenOptions={{
@@ -48,7 +55,17 @@ const AppNavigation = () => {
         name={ROUTES.BOTTOM_TABS}
         component = {BottomTabs}
       />
+       <Stack.Screen
+        name={ROUTES.UPDATEPROFILE_SCR}
+        component = {UpdateProfileScreen}
+      />
+       <Stack.Screen
+        name={ROUTES.CHAT_ROOM_SCR}
+        component = {ChatRoomScreen}
+      />
     </Stack.Navigator>
+              </SafeAreaView>
+
   );
 };
 

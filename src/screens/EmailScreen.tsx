@@ -15,7 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/navigation';
 import { ROUTES } from '../constants/routes';
 import { signInOrSignUp } from '../services/authService';
-
+import {s ,vs, ms } from '../utils/scaling'
 type NavigationType = NativeStackNavigationProp<
   RootStackParamList,
   typeof ROUTES.EMAIL_SCR
@@ -121,56 +121,65 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.BACKGROUND_DARK,
   },
+
   flex: {
     flex: 1,
   },
+
   backButton: {
-    marginTop: 12,
-    marginLeft: 20,
-    width: 40,
-    height: 40,
+    marginTop: vs(12),
+    marginLeft: s(20),
+    width: ms(40),
+    height: ms(40),
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   backArrow: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 26,
+    fontSize: ms(26),
   },
+
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    marginTop: 24,
+    paddingHorizontal: s(24),
+    marginTop: vs(24),
   },
+
   title: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 40,
+    fontSize: ms(40),
     fontWeight: '700',
-    lineHeight: 46,
-    marginBottom: 40,
+    lineHeight: vs(46),
+    marginBottom: vs(40),
   },
+
   inputWrapper: {
     borderBottomWidth: 1,
     borderBottomColor: COLORS.COLOR_BORDER,
-    paddingBottom: 10,
-    marginBottom: 24,
+    paddingBottom: vs(10),
+    marginBottom: vs(24),
   },
+
   emailInput: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 20,
+    fontSize: ms(20),
     padding: 0,
   },
+
   nextButton: {
     backgroundColor: COLORS.BACKGROUND_NXTBTN,
-    borderRadius: 30,
-    marginHorizontal: 24,
-    marginBottom: 32,
-    paddingVertical: 18,
+    borderRadius: ms(30),
+    marginHorizontal: s(24),
+    marginBottom: vs(32),
+    paddingVertical: vs(18),
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   nextButtonText: {
     color: COLORS.COLOR_NXTBTN,
-    fontSize: 18,
+    fontSize: ms(18),
     fontWeight: '600',
   },
 });

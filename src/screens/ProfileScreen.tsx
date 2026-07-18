@@ -1,4 +1,5 @@
-import React from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -6,60 +7,152 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
+import { BottomTabParamList, RootStackParamList } from '../navigation/navigation';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import {CompositeScreenProps, useFocusEffect} from '@react-navigation/native'
+import { ROUTES } from '../constants/routes';
+import { getCurrentUserDoc } from '../services/userService';
+import { ms, s, vs } from '../utils/scaling';
+import { COLORS } from '../constants/colors';
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<
+    BottomTabParamList,
+    typeof ROUTES.PROFILE_SCR
+  >,
+  NativeStackScreenProps<RootStackParamList>
+>;
+type User = {
+  id: string;
+  name: string;
+  city: string;
+  profileImage: string;
+  caption: string;
+  interests: string[];
+};
 
-const ProfileScreen = () => {
-  const user = {
-    name: 'Pavan',
-    age: 24,
-    city: 'Bharuch',
-    bio: 'Coffee lover ☕ • Traveler ✈️ • React Native Developer',
-    image:
-      'https://res.cloudinary.com/dp64jxn0h/image/upload/v1781690681/instaclone/posts/gA8QJtXSPBeSQbL258dgNwpzBdS2_0RUoSQECEWqlhpsZWK2H.jpg',
-    interests: ['Music', 'Travel', 'Gym', 'Coding'],
-  };
+const ProfileScreen = ({navigation}:Props) => {
+  const [loading, setLoading] = useState(false);
+const [user, setUser] = useState<User>({
+  id: '',
+  name: '',
+  city: '',
+  profileImage: '',
+  caption: '',
+  interests: [],
+});  
+useFocusEffect(
+  useCallback(() => {
+    loadUser();
+  }, []),
+);
+ const loadUser = async () => {
+  try {
+    setLoading(true);
 
+    const userDoc = await getCurrentUserDoc();
+
+    if (!userDoc?.exists()) {
+      return;
+    }
+
+    const data = userDoc.data();
+
+    setUser({
+      id: data.id ?? '',
+      name: data.name ?? '',
+      city: data.city ?? '',
+      profileImage: data.profileImage ?? '',
+      caption: data.caption ?? '',
+      interests: data.interests ?? [],
+    });
+  } catch (error) {
+    console.log(error);
+    Alert.alert('Error', 'Failed to load profile');
+  } finally {
+    setLoading(false);
+  }
+};
+
+ if (loading) {
   return (
-    <ScrollView style={styles.container}>
-    
-      <Image source={{ uri: user.image }} style={styles.profileImage} />
+    <View style={styles.loader}>
+      <ActivityIndicator size="large" color="#FF4458" />
+    </View>
+  );
+}
 
-      <Text style={styles.name}>
-        {user.name}, {user.age}
-      </Text>
+return (
+  <ScrollView
+    style={styles.container}
+    contentContainerStyle={styles.content}
+    showsVerticalScrollIndicator={false}>
+    <Image
+      source={{
+        uri:
+          user.profileImage ||
+          'https://via.placeholder.com/200',
+      }}
+      style={styles.profileImage}
+    />
 
-      <Text style={styles.city}>{user.city}</Text>
+    <Text style={styles.name}>{user.name}</Text>
 
-      <Text style={styles.bio}>{user.bio}</Text>
+    <Text style={styles.city}>{user.city}</Text>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Interests</Text>
+    <Text style={styles.bio}>
+      {user.caption || 'No caption added'}
+    </Text>
 
-        <View style={styles.interestsContainer}>
-          {user.interests.map(item => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Interests</Text>
+
+      <View style={styles.interestsContainer}>
+        {user.interests.length > 0 ? (
+          user.interests.map(item => (
             <View key={item} style={styles.chip}>
               <Text style={styles.chipText}>{item}</Text>
             </View>
-          ))}
-        </View>
+          ))
+        ) : (
+          <Text>No interests added</Text>
+        )}
       </View>
+    </View>
 
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Edit Profile</Text>
-        </TouchableOpacity>
+    <View style={styles.section}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(
+            ROUTES.UPDATEPROFILE_SCR,
+          )
+        }
+        style={styles.button}>
+        <Text style={styles.buttonText}>
+          Edit Profile
+        </Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Settings</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>
+          Settings
+        </Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.logoutButton]}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-  );
+      <TouchableOpacity
+        style={[
+          styles.button,
+          styles.logoutButton,
+        ]}>
+        <Text style={styles.logoutText}>
+          Logout
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </ScrollView>
+);
 };
 
 export default ProfileScreen;
@@ -67,100 +160,118 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.BACKGROUND_LIGHT,
   },
 
   header: {
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingTop: vs(60),
+    paddingBottom: vs(20),
     alignItems: 'center',
   },
 
   headerTitle: {
-    fontSize: 28,
+    fontSize: ms(28),
     fontWeight: '700',
-    color: '#FF4458',
+    color: COLORS.BACKGROUND_RED,
+  },
+
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  content: {
+    paddingVertical: vs(30),
+    paddingHorizontal: s(20),
   },
 
   profileImage: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: s(180),
+    height: s(180),
+    borderRadius: ms(90),
     alignSelf: 'center',
   },
 
   name: {
-    marginTop: 20,
+    marginTop: vs(20),
     textAlign: 'center',
-    fontSize: 30,
+    fontSize: ms(30),
     fontWeight: '700',
+    color: COLORS.COLOR_TEXT_PRIMARY,
   },
 
   city: {
-    marginTop: 8,
+    marginTop: vs(8),
     textAlign: 'center',
-    fontSize: 18,
-    color: '#777',
+    fontSize: ms(18),
+    color: COLORS.COLOR_TEXT_SECONDARY,
   },
 
   bio: {
-    marginTop: 16,
-    paddingHorizontal: 24,
+    marginTop: vs(16),
     textAlign: 'center',
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#444',
+    fontSize: ms(16),
+    lineHeight: vs(24),
+    color: COLORS.COLOR_TEXT_MUTED,
+    paddingHorizontal: s(10),
   },
 
   section: {
-    marginTop: 32,
-    paddingHorizontal: 20,
+    marginTop: vs(32),
+    paddingHorizontal: s(20),
   },
 
   sectionTitle: {
-    fontSize: 22,
+    fontSize: ms(22),
     fontWeight: '700',
-    marginBottom: 16,
+    marginBottom: vs(16),
+    color: COLORS.COLOR_TEXT_PRIMARY,
   },
 
   interestsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: s(10),
   },
 
   chip: {
-    backgroundColor: '#FFE5E8',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 20,
+    backgroundColor:
+      COLORS.PROFILE_CHIP_BACKGROUND,
+    paddingHorizontal: s(18),
+    paddingVertical: vs(10),
+    borderRadius: ms(20),
   },
 
   chipText: {
-    color: '#FF4458',
+    color: COLORS.BACKGROUND_RED,
+    fontSize: ms(14),
     fontWeight: '600',
   },
 
   button: {
-    backgroundColor: '#F5F5F5',
-    paddingVertical: 16,
-    borderRadius: 16,
+    backgroundColor:
+      COLORS.PROFILE_BUTTON_BACKGROUND,
+    paddingVertical: vs(16),
+    borderRadius: ms(16),
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: vs(14),
   },
 
   buttonText: {
-    fontSize: 16,
+    fontSize: ms(16),
     fontWeight: '600',
+    color: COLORS.COLOR_TEXT_PRIMARY,
   },
 
   logoutButton: {
-    backgroundColor: '#FFE5E8',
+    backgroundColor:
+      COLORS.PROFILE_CHIP_BACKGROUND,
   },
 
   logoutText: {
-    color: '#FF4458',
-    fontSize: 16,
+    color: COLORS.BACKGROUND_RED,
+    fontSize: ms(16),
     fontWeight: '700',
   },
 });

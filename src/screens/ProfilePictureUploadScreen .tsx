@@ -23,7 +23,7 @@ import { ROUTES } from '../constants/routes';
 import { RootStackParamList } from '../navigation/navigation';
 import { uploadImageFromUrl } from '../services/cloudinaryService';
 import { saveProfile } from '../services/userService';
-
+import { ms, s, vs } from '../utils/scaling';
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'PROFILEPIC_UPLOAD_SCR'
@@ -168,25 +168,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.BACKGROUND_DARK,
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingHorizontal: s(24),
+    paddingTop: vs(60),
   },
 
   title: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 30,
+    fontSize: ms(30),
     fontWeight: '700',
-    marginBottom: 40,
+    marginBottom: vs(40),
   },
 
   imageContainer: {
-    width: 220,
-    height: 220,
-    borderRadius: 110,
+    width: s(220),
+    height: s(220),
+    borderRadius: ms(110),
     overflow: 'hidden',
-    borderWidth: 3,
+    borderWidth: ms(3),
     borderColor: COLORS.ICON_ACTIVE,
-    marginBottom: 24,
+    marginBottom: vs(24),
   },
 
   profileImage: {
@@ -196,50 +196,73 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: vs(20),
   },
 
   input: {
     width: '100%',
     backgroundColor: '#1F1F1F',
+
     color: COLORS.COLOR_LIGHT,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
+
+    borderRadius: ms(14),
+
+    paddingHorizontal: s(16),
+
+    paddingVertical: vs(14),
+
+    fontSize: ms(16),
+
     borderWidth: 1,
+
     borderColor: COLORS.ICON_ACTIVE,
   },
 
   button: {
     width: '100%',
+
     backgroundColor: COLORS.BACKGROUND_NXTBTN,
-    paddingVertical: 16,
-    borderRadius: 30,
+
+    paddingVertical: vs(16),
+
+    borderRadius: ms(30),
+
     alignItems: 'center',
-    marginBottom: 16,
+
+    marginBottom: vs(16),
   },
 
   buttonText: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 16,
+
+    fontSize: ms(16),
+
     fontWeight: '600',
   },
 
   nextButton: {
     position: 'absolute',
-    bottom: 30,
-    left: 24,
-    right: 24,
+
+    bottom: vs(30),
+
+    left: s(24),
+
+    right: s(24),
+
     backgroundColor: COLORS.ICON_ACTIVE,
-    paddingVertical: 16,
-    borderRadius: 30,
+
+    paddingVertical: vs(16),
+
+    borderRadius: ms(30),
+
     alignItems: 'center',
   },
 
   nextButtonText: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 18,
+
+    fontSize: ms(18),
+
     fontWeight: '700',
   },
 });

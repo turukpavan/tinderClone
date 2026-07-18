@@ -1,4 +1,4 @@
-import { StatusBar, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { ROUTES } from '../constants/routes';
 
 import { RootStackParamList } from '../navigation/navigation';
 import { signInWithGoogle } from '../services/authService';
+import { s, vs, ms } from '../utils/scaling';
 
 type NavigationType = NativeStackNavigationProp<
   RootStackParamList,
@@ -20,7 +21,6 @@ type Props = {
 };
 
 const LoginScreen = ({ navigation }: Props) => {
-    const isDarkMode = useColorScheme() === 'light';
   
   const handleGoogleLogin = async () => {
   try {
@@ -37,7 +37,6 @@ const LoginScreen = ({ navigation }: Props) => {
   return (
     
     <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={COLORS.BACKGROUND_RED}/>
       <View style={styles.section1}>
         <Text style={styles.tinder}>TINDER</Text>
       </View>
@@ -89,7 +88,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.BACKGROUND_RED,
-    padding: 20,
+    padding: s(20),
   },
 
   section1: {
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
 
   tinder: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 55,
+    fontSize: ms(55),
     fontWeight: '900',
   },
 
@@ -111,9 +110,10 @@ const styles = StyleSheet.create({
   policyTxt: {
     color: COLORS.COLOR_LIGHT,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: ms(14),
     fontWeight: '400',
-    paddingBottom: 20,
+    paddingBottom: vs(20),
+    lineHeight: vs(22),
   },
 
   underLine: {
@@ -122,17 +122,18 @@ const styles = StyleSheet.create({
 
   loginWithContainer: {
     backgroundColor: COLORS.BACKGROUND_LIGHT,
-    marginBottom: 10,
-    padding: 15,
-    borderRadius: 35,
+    marginBottom: vs(10),
+    paddingVertical: vs(15),
+    paddingHorizontal: s(18),
+    borderRadius: ms(35),
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: s(10),
   },
 
   iconGoogle: {
     color: COLORS.COLOR_DARK,
-    fontSize: 24,
+    fontSize: ms(24),
     fontWeight: '700',
   },
 });

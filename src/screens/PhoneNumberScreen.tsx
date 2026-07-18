@@ -14,6 +14,7 @@ import { ROUTES } from '../constants/routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/navigation';
 import { COLORS } from '../constants/colors';
+import { ms, s, vs } from '../utils/scaling';
 
 type NavigationType = NativeStackNavigationProp<
   RootStackParamList,
@@ -112,6 +113,7 @@ const PhoneNumberScreen = ({navigation} :Props) => {
     </SafeAreaView>
   );
 };
+export default PhoneNumberScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -124,37 +126,37 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
-    marginTop: 12,
-    marginLeft: 20,
-    width: 40,
-    height: 40,
+    marginTop: vs(12),
+    marginLeft: s(20),
+    width: s(40),
+    height: vs(40),
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   backArrow: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 26,
+    fontSize: ms(26),
   },
 
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    marginTop: 24,
+    paddingHorizontal: s(24),
+    marginTop: vs(24),
   },
 
   title: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 35,
+    fontSize: ms(35),
     fontWeight: '700',
-    lineHeight: 46,
-    marginBottom: 40,
+    lineHeight: vs(46),
+    marginBottom: vs(40),
   },
 
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginBottom: 32,
+    marginBottom: vs(32),
   },
 
   countryCode: {
@@ -162,56 +164,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: COLORS.COLOR_BORDER,
-    paddingBottom: 10,
-    marginRight: 16,
+    paddingBottom: vs(10),
+    marginRight: s(16),
   },
 
   countryCodeText: {
     color: COLORS.COLOR_SECONDARY_TEXT,
-    fontSize: 20,
-    marginRight: 4,
+    fontSize: ms(20),
+    marginRight: s(4),
   },
 
   chevron: {
     color: COLORS.COLOR_SECONDARY_TEXT,
-    fontSize: 14,
-    marginBottom: 2,
+    fontSize: ms(14),
+    marginBottom: vs(2),
   },
 
   phoneInputWrapper: {
     flex: 1,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.COLOR_LIGHT,
-    paddingBottom: 10,
+    paddingBottom: vs(10),
   },
 
   phoneInput: {
     color: COLORS.COLOR_LIGHT,
-    fontSize: 20,
+    fontSize: ms(20),
     padding: 0,
   },
 
   disclaimer: {
     color: COLORS.COLOR_PLACEHOLDER,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: ms(15),
+    lineHeight: vs(22),
   },
 
   nextButton: {
     backgroundColor: COLORS.BACKGROUND_NXTBTN,
-    borderRadius: 30,
-    marginHorizontal: 24,
-    marginBottom: 32,
-    paddingVertical: 18,
+    borderRadius: ms(30),
+    marginHorizontal: s(24),
+    marginBottom: vs(32),
+    paddingVertical: vs(18),
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   nextButtonText: {
     color: COLORS.COLOR_NXTBTN,
-    fontSize: 18,
+    fontSize: ms(18),
     fontWeight: '600',
   },
 });
 
-export default PhoneNumberScreen;

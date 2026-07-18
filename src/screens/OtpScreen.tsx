@@ -5,7 +5,7 @@ import { sendOtp } from '../services/authService';
 import OtpVerificationScreen from './OtpVerificationScreen';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { getUserDoc } from '../services/userService';
+import { getCurrentUserDoc } from '../services/userService';
 
 type Props = NativeStackScreenProps<RootStackParamList, typeof ROUTES.OTP_SCR>;
 
@@ -16,10 +16,10 @@ const OtpScreen = ({ route, navigation }: Props) => {
   const handleSubmit = async (code: string) => {
     try {
       setLoading(true);
-const userCredential = await confirmation.confirm(code);
+ await confirmation.confirm(code);
 
 Alert.alert("otp conform")
-const userDoc = await getUserDoc(userCredential.user.uid)
+const userDoc = await getCurrentUserDoc();
 
 userDoc.exists() ? 
     navigation.navigate(ROUTES.BOTTOM_TABS,{screen : 'STACK_SCR'})
