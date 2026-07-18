@@ -1,4 +1,3 @@
-import { ConfirmationResult } from '@react-native-firebase/auth';
 import { ROUTES } from '../constants/routes';
 import { NavigatorScreenParams } from '@react-navigation/native';
 
@@ -21,7 +20,6 @@ export type RootStackParamList = {
   [ROUTES.UPDATEPROFILE_SCR]: undefined;
 
   [ROUTES.OTP_SCR]: {
-    confirmation: ConfirmationResult;
     phoneNumber: string;
   };
    [ROUTES.CHAT_ROOM_SCR]: {

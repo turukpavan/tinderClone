@@ -1,6 +1,5 @@
 import React from 'react';
 import { LucideProps } from 'lucide-react-native';
-
 import {
   Mail,
   Phone,

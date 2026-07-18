@@ -54,8 +54,6 @@ export const getMatches = async () => {
 
 
 // realtime database for sending and store message
-
-
 export const sendMessage = async (
   matchId: string,
   text: string,
@@ -96,8 +94,6 @@ export const sendMessage = async (
 };
 
 // message listner 
-
-
 const realtimeDb = getDatabase();
 
 export const subscribeToMessages = (

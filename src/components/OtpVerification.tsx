@@ -13,7 +13,7 @@ import { s, vs, ms } from '../utils/scaling';
 
 type OtpChannel = 'phone' | 'email';
 
- interface OtpVerificationScreenProps {
+interface OtpVerificationScreenProps {
   channel: OtpChannel;
   destination: string;
   length?: number;
@@ -21,13 +21,15 @@ type OtpChannel = 'phone' | 'email';
   onSubmit?: (code: string) => void;
   onResend?: () => void;
   onBack?: () => void;
-  loading : boolean
+  loading: boolean;
+  resending?: boolean;
+  resendCooldown?: number;
   expiryText?: string;
 }
 
 const DIGIT_REGEX = /^[0-9]$/;
 
-const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
+const OtpVerification: React.FC<OtpVerificationScreenProps> = ({
   channel,
   destination,
   length = 6,
@@ -36,63 +38,85 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
   onResend,
   onBack,
   loading,
+  resending = false,
+  resendCooldown = 0,
   expiryText,
 }) => {
   const [digits, setDigits] = useState<string[]>(Array(length).fill(''));
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputs = useRef<Array<TextInput | null>>([]);
 
   const code = useMemo(() => digits.join(''), [digits]);
   const isComplete = code.length === length;
+  const isResendDisabled = resending || resendCooldown > 0;
 
   const handleChangeText = useCallback(
     (text: string, index: number) => {
       if (text.length > 1) {
-        const pasted = text.replace(/[^0-9]/g, '').slice(0, length).split('');
+        const pasted = text
+          .replace(/[^0-9]/g, '')
+          .slice(0, length)
+          .split('');
         const next = Array(length).fill('');
         pasted.forEach((d, i) => (next[i] = d));
         setDigits(next);
         const lastFilled = Math.min(pasted.length, length) - 1;
-        if (lastFilled >= 0) inputs.current[Math.min(lastFilled, length - 1)]?.focus();
+        if (lastFilled >= 0)
+          inputs.current[Math.min(lastFilled, length - 1)]?.focus();
         if (pasted.length === length) onComplete?.(next.join(''));
         return;
       }
 
       if (text !== '' && !DIGIT_REGEX.test(text)) return;
 
-      setDigits((prev) => {
+      setDigits(prev => {
         const next = [...prev];
         next[index] = text;
         if (text !== '' && index < length - 1) {
           inputs.current[index + 1]?.focus();
         }
-        if (next.every((d) => d !== '')) {
+        if (next.every(d => d !== '')) {
           onComplete?.(next.join(''));
         }
         return next;
       });
     },
-    [length, onComplete]
+    [length, onComplete],
   );
 
   const handleKeyPress = useCallback(
     (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
-      if (e.nativeEvent.key === 'Backspace' && digits[index] === '' && index > 0) {
+      if (
+        e.nativeEvent.key === 'Backspace' &&
+        digits[index] === '' &&
+        index > 0
+      ) {
         inputs.current[index - 1]?.focus();
-        setDigits((prev) => {
+        setDigits(prev => {
           const next = [...prev];
           next[index - 1] = '';
           return next;
         });
       }
     },
-    [digits]
+    [digits],
   );
 
   const handleResend = useCallback(() => {
+    if (isResendDisabled) return;
     setDigits(Array(length).fill(''));
     inputs.current[0]?.focus();
     onResend?.();
-  }, [length, onResend]);
+  }, [length, onResend, isResendDisabled]);
+
+  const resendLabel =
+    resendCooldown > 0
+      ? `Resend in ${resendCooldown}s`
+      : resending
+      ? 'Sending...'
+      : channel === 'email'
+      ? 'Resend via email'
+      : 'Resend';
 
   const subtitle =
     channel === 'email' ? (
@@ -110,6 +134,8 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
         style={styles.backButton}
         onPress={onBack}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
       >
         <Text style={styles.backArrow}>{'‹'}</Text>
       </TouchableOpacity>
@@ -122,22 +148,30 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
         {digits.map((digit, index) => (
           <View key={index} style={styles.otpBoxWrapper}>
             <TextInput
-              ref={(ref) => {
+              ref={ref => {
                 inputs.current[index] = ref;
               }}
               style={styles.otpInput}
               value={digit}
-              onChangeText={(text) => handleChangeText(text, index)}
-              onKeyPress={(e) => handleKeyPress(e, index)}
+              onChangeText={text => handleChangeText(text, index)}
+              onKeyPress={e => handleKeyPress(e, index)}
+              onFocus={() => setFocusedIndex(index)}
+              onBlur={() =>
+                setFocusedIndex(prev => (prev === index ? null : prev))
+              }
               keyboardType="number-pad"
               maxLength={length}
               autoFocus={index === 0}
               caretHidden
+              editable={!loading}
+              accessibilityLabel={`Digit ${index + 1} of ${length}`}
             />
             <View
               style={[
                 styles.underline,
-                index === 0 || digit !== '' ? styles.underlineActive : styles.underlineInactive,
+                digit !== '' || focusedIndex === index
+                  ? styles.underlineActive
+                  : styles.underlineInactive,
               ]}
             />
           </View>
@@ -145,31 +179,53 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
       </View>
 
       {channel === 'email' ? (
-        <TouchableOpacity onPress={handleResend}>
-          <Text style={styles.resendLink}>Resend via email</Text>
+        <TouchableOpacity onPress={handleResend} disabled={isResendDisabled}>
+          <Text
+            style={[
+              styles.resendLink,
+              isResendDisabled && styles.resendLinkDisabled,
+            ]}
+          >
+            {resendLabel}
+          </Text>
         </TouchableOpacity>
       ) : (
         <View>
-          <Text style={styles.helperText}>Didn’t get anything? No worries, let’s try again.</Text>
-          <TouchableOpacity onPress={handleResend}>
-            <Text style={styles.resendLink}>Resend</Text>
+          <Text style={styles.helperText}>
+            Didn't get anything? No worries, let's try again.
+          </Text>
+          <TouchableOpacity onPress={handleResend} disabled={isResendDisabled}>
+            <Text
+              style={[
+                styles.resendLink,
+                isResendDisabled && styles.resendLinkDisabled,
+              ]}
+            >
+              {resendLabel}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
 
       <TouchableOpacity
         style={[styles.nextButton, isComplete && styles.nextButtonActive]}
-        disabled={!isComplete}
+        disabled={!isComplete || loading}
         onPress={() => onSubmit?.(code)}
       >
-        <Text style={[styles.nextButtonText, isComplete && styles.nextButtonTextActive]}>
-          {loading ? 'Please Wait...' : 'next'}
+        <Text
+          style={[
+            styles.nextButtonText,
+            isComplete && styles.nextButtonTextActive,
+          ]}
+        >
+          {loading ? 'Please Wait...' : 'Next'}
         </Text>
       </TouchableOpacity>
     </View>
   );
 };
-export default OtpVerificationScreen;
+
+export default React.memo(OtpVerification);
 
 const BOX_SIZE = 40;
 
@@ -257,6 +313,10 @@ const styles = StyleSheet.create({
     marginTop: vs(20),
   },
 
+  resendLinkDisabled: {
+    opacity: 0.5,
+  },
+
   helperText: {
     color: COLORS.COLOR_PLACEHOLDER,
     fontSize: ms(15),
@@ -287,4 +347,3 @@ const styles = StyleSheet.create({
     color: COLORS.BACKGROUND_LIGHT,
   },
 });
-
