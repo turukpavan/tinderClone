@@ -6,6 +6,10 @@ import {
   Flame,
   MessageCircleHeart,
   User,
+  MapPin,
+  ChevronRight,
+  Settings,
+  LogOut
 } from 'lucide-react-native';
 
 const icons = {
@@ -14,6 +18,10 @@ const icons = {
   Flame,
   MessageCircleHeart,
   User,
+  MapPin,
+  ChevronRight,
+  Settings,
+  LogOut
 };
 
 type IconName = keyof typeof icons;
