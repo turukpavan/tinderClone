@@ -31,7 +31,8 @@ const AppNavigation = () => {
     
     return subscriber; 
   }, []);
-  if (initializing) <Loader />
+
+  if (initializing) return <Loader />;
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top']}>

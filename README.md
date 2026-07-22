@@ -1,97 +1,116 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Tinder Clone
 
-# Getting Started
+A React Native Tinder-style clone with Firebase authentication, OTP verification, profile setup, chat, and swipe-based user interactions.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- Google Sign-In authentication
+- Phone number OTP login and verification
+- Email login/sign-up flow
+- Profile picture upload and onboarding
+- Bottom tabs with home, chat list, and profile screens
+- Firebase Firestore and Realtime Database support
+- Toast notifications and user-friendly UI
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Prerequisites
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- Node.js >= 22.11.0
+- npm or Yarn
+- Android SDK and emulator or device
+- Xcode and CocoaPods for iOS
+- Firebase project with Authentication enabled
+
+## Setup
+
+1. Clone the repository:
 
 ```sh
-# Using npm
+git clone <repo-url>
+cd tinderClone
+```
+
+2. Install dependencies:
+
+```sh
+npm install
+```
+
+3. Configure Firebase:
+
+- Add your Firebase Android and iOS config files if needed.
+- The app uses `@react-native-firebase/app`, `auth`, `database`, and `firestore` from `src/config/firebase.ts`.
+
+4. Configure Google Sign-In:
+
+- Open `src/config/googleAuth.ts`
+- Replace the `webClientId` value with your own OAuth 2.0 Web client ID.
+
+5. Install iOS native dependencies (macOS only):
+
+```sh
+cd ios
+npx pod-install
+cd ..
+```
+
+## Running the app
+
+Start Metro:
+
+```sh
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+Run on Android:
 
 ```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+Run on iOS:
 
 ```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Available scripts
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+- `npm start` - Start Metro bundler
+- `npm run android` - Run on Android emulator/device
+- `npm run ios` - Run on iOS simulator/device
+- `npm run lint` - Run ESLint
+- `npm test` - Run Jest tests
 
-## Step 3: Modify your app
+## Project structure
 
-Now that you have successfully run the app, let's make changes!
+- `App.tsx` - App entry point and navigation provider
+- `src/navigation` - App and tab navigation setup
+- `src/screens` - Screen components for login, OTP, chats, profile, and onboarding
+- `src/components` - Shared UI components like `OtpVerification` and `Loader`
+- `src/hooks` - Custom hooks for auth, profile setup, chat, and OTP handling
+- `src/services` - Firebase auth, chat, user, and OTP services
+- `src/config` - Firebase and Google auth configuration
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Authentication flow
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+1. User selects Google, phone, or email login
+2. Phone login sends OTP via `src/services/authService.ts`
+3. `OtpVerification` verifies the code and resumes the flow
+4. New users are prompted to upload a profile picture and enter a city
+5. Existing users are routed to the main app tabs
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## Notes
 
-## Congratulations! :tada:
+- `src/navigation/AppNavigation.tsx` controls the auth state and initial screen routing.
+- `src/components/OtpVerification.tsx` handles code input, resend logic, and keyboard interactions.
+- `src/screens/ProfilePictureUploadScreen/index.tsx` includes profile photo selection and upload.
 
-You've successfully run and modified your React Native App. :partying_face:
+## Troubleshooting
 
-### Now what?
+- If Google sign-in fails, verify `webClientId` in `src/config/googleAuth.ts`.
+- If Firebase auth fails, confirm Firebase project config and app registration.
+- For iOS, always run `npx pod-install` after dependency changes.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## License
 
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+This project is provided as-is for learning and prototyping.
