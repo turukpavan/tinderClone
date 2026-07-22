@@ -1,10 +1,11 @@
 // hooks/useStackUsers.ts
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
+  createMatchIfExists,
   getAllStackUsers,
   saveSwipe,
-  createMatchIfExists,
 } from '../services/userService';
+import { toaster } from '../utils/toaster';
 
 export type User = {
   id: string;
@@ -22,12 +23,15 @@ export const useStackUsers = () => {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
       const data = await getAllStackUsers();
       setUsers(data);
-    } catch (err) {
-      setError('Failed to fetch profiles. Please try again.');
-      console.error(err);
+    } catch {
+      const message = 'Failed to fetch profiles. Please try again.';
+
+      setError(message);
+      toaster.error('Error', message);
     } finally {
       setLoading(false);
     }
@@ -36,16 +40,25 @@ export const useStackUsers = () => {
   const handleSwipeRight = useCallback(
     async (cardIndex: number) => {
       const likedUser = users[cardIndex];
+
       if (!likedUser) return;
 
       try {
         await saveSwipe(likedUser.id, 'likes');
+
         const isMatch = await createMatchIfExists(likedUser.id);
+
         if (isMatch) {
-          console.log('🎉 Match!');
+          toaster.success(
+            "It's a match! 🎉",
+            `You matched with ${likedUser.name}`,
+          );
         }
-      } catch (err) {
-        console.error('Failed to swipe right:', err);
+      } catch {
+        toaster.error(
+          'Swipe failed',
+          'Unable to save your like. Please try again.',
+        );
       }
     },
     [users],
@@ -54,12 +67,16 @@ export const useStackUsers = () => {
   const handleSwipeLeft = useCallback(
     async (cardIndex: number) => {
       const passedUser = users[cardIndex];
+
       if (!passedUser) return;
 
       try {
         await saveSwipe(passedUser.id, 'passes');
-      } catch (err) {
-        console.error('Failed to swipe left:', err);
+      } catch {
+        toaster.error(
+          'Swipe failed',
+          'Unable to save your action. Please try again.',
+        );
       }
     },
     [users],

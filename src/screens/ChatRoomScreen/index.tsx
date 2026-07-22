@@ -18,6 +18,7 @@ import MessageBubble from '../../components/MessageBubble';
 import { DUMMY_IMAGE } from '../../constants/profile';
 import { styles } from './styles';
 import { vs } from '../../utils/scaling';
+import { COLORS } from '../../constants/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, typeof ROUTES.CHAT_ROOM_SCR>;
 
@@ -77,6 +78,7 @@ const ChatRoomScreen = ({ route, navigation }: Props) => {
           maxLength={MAX_MESSAGE_LENGTH}
           multiline
           editable={!sending}
+          placeholderTextColor={COLORS.COLOR_PLACEHOLDER}
         />
 
         <TouchableOpacity

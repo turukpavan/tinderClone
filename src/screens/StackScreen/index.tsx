@@ -3,8 +3,6 @@ import {
   View,
   Text,
   Image,
-  StatusBar,
-  useColorScheme,
   useWindowDimensions,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -18,7 +16,6 @@ import Loader from '../../components/Loader';
 
 const StackScreen = () => {
   const { width, height } = useWindowDimensions();
-  const isDarkMode = useColorScheme() === 'dark';
 
   const { users, loading, fetchUsers, handleSwipeRight, handleSwipeLeft } =
     useStackUsers();
@@ -64,22 +61,18 @@ const StackScreen = () => {
     [width, height],
   );
 
-  const activeThemeBg = isDarkMode
-    ? COLORS.BACKGROUND_DARK
-    : COLORS.BACKGROUND_LIGHT;
+  
 
   return (
-    <View style={[styles.container, { backgroundColor: activeThemeBg }]}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={activeThemeBg}
-      />
+    <View style={[styles.container, { backgroundColor: COLORS.BACKGROUND_LIGHT}]}>
+     
 
       {loading ? (
         <View style={styles.loaderContainer}>
-          <Loader
-            size="large"
-            color={ COLORS.COLOR_WHITE }
+           <Loader
+    size="large"
+    color={COLORS.COLOR_LOADER_RED}
+    backgroundColor={COLORS.BACKGROUND_LIGHT}
           />
         </View>
       ) : (

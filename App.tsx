@@ -10,8 +10,8 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle='dark-content' backgroundColor={COLORS.BACKGROUND_RED}/>    
       <NavigationContainer>
+      <StatusBar barStyle='dark-content'backgroundColor={COLORS.BACKGROUND_LIGHT}/>
       <AppNavigation/>
       </NavigationContainer>
     </SafeAreaProvider>

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View} from 'react-native';
+import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState, useCallback } from 'react';
 const google = require('../../assets/icons/google.png');
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -26,25 +26,27 @@ type Props = {
 const LoginScreen = ({ navigation }: Props) => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-const handleGoogleLogin = useCallback(async () => {
-  if (isLoggingIn) return;
+  const handleGoogleLogin = useCallback(async () => {
+    if (isLoggingIn) return;
 
-  const result = await runWithAuthHandling(
-    () => signInWithGoogle(),
-    { setLoading: setIsLoggingIn, errorTitle: 'Login failed' },
-  );
+    const result = await runWithAuthHandling(
+      () => signInWithGoogle(),
+      { setLoading: setIsLoggingIn, errorTitle: 'Login failed' },
+    );
 
-  if (!result.success) return;
+    if (!result.success) return;
 
-  if (result.data) {
-    navigation.navigate(ROUTES.PROFILEPIC_UPLOAD_SCR);
-  } else {
-    navigation.navigate(ROUTES.BOTTOM_TABS, { screen: ROUTES.STACK_SCR });
-  }
-}, [isLoggingIn, navigation]);
+    if (result.data) {
+      navigation.navigate(ROUTES.PROFILEPIC_UPLOAD_SCR);
+    } else {
+      navigation.navigate(ROUTES.BOTTOM_TABS, { screen: ROUTES.STACK_SCR });
+    }
+  }, [isLoggingIn, navigation]);
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle='dark-content' backgroundColor={COLORS.BACKGROUND_RED} />
+
       <View style={styles.section1}>
         <Text style={styles.tinder}>TINDER</Text>
       </View>
@@ -66,7 +68,7 @@ const handleGoogleLogin = useCallback(async () => {
           disabled={isLoggingIn}
         >
           {isLoggingIn ? (
-            <Loader color={COLORS.COLOR_DARK}  />
+            <Loader size='small' color={COLORS.COLOR_DARK}/> 
           ) : (
             <>
               <AppIcon source={google} size={23} />

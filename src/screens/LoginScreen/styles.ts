@@ -40,7 +40,6 @@ export const styles = StyleSheet.create({
     borderRadius: ms(35),
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     gap: s(10),
   },
   buttonText: {

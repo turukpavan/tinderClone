@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
   },
 
   loaderContainer: {
+    backgroundColor : COLORS.BACKGROUND_LIGHT,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

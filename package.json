@@ -33,6 +33,7 @@
     "react-native-screens": "^4.26.0",
     "react-native-size-matters": "^0.4.2",
     "react-native-svg": "^15.15.5",
+    "react-native-toast-message": "^2.4.0",
     "react-native-worklets": "^0.10.2"
   },
   "devDependencies": {

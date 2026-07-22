@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { FlatList } from 'react-native';
 import { sendMessage, subscribeToMessages } from '../services/chatService';
+import { getDatabaseErrorMessage } from '../utils/databaseErrors';
+import { toaster } from '../utils/toaster';
 
 type Message = {
   id: string;
@@ -15,11 +17,25 @@ export const useChatRoom = (matchId: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [sending, setSending] = useState(false);
   const flatListRef = useRef<FlatList<Message>>(null);
+const hasShownError = useRef(false);
+useEffect(() => {
+  const unsubscribe = subscribeToMessages(
+    matchId,
+    setMessages,
+    error => {
+      if (!hasShownError.current) {
+        hasShownError.current = true;
 
-  useEffect(() => {
-    const unsubscribe = subscribeToMessages(matchId, setMessages);
-    return unsubscribe;
-  }, [matchId]);
+        toaster.error(
+          'Unable to load messages',
+          getDatabaseErrorMessage(error),
+        );
+      }
+    },
+  );
+
+  return unsubscribe;
+}, [matchId]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -36,7 +52,10 @@ export const useChatRoom = (matchId: string) => {
       await sendMessage(matchId, trimmed);
       setMessage('');
     } catch (error) {
-      console.log('sendMessage error', error);
+       toaster.error(
+      'Failed to send message',
+      getDatabaseErrorMessage(error),
+    );
     } finally {
       setSending(false);
     }

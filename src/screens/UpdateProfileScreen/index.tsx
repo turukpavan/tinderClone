@@ -52,7 +52,7 @@ const UpdateProfileScreen = () => {
   if (initialLoading) {
     return (
       <View style={styles.loaderContainer}>
-        <Loader size="large" color="#FF4458" />
+        <Loader size="large" color={COLORS.COLOR_LOADER_RED} backgroundColor={COLORS.BACKGROUND_LIGHT} />
       </View>
     );
   }

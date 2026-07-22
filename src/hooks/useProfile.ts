@@ -1,7 +1,8 @@
-// hooks/useProfile.ts
-import { useState, useCallback } from 'react';
-import { Alert } from 'react-native';
+import { useCallback, useState } from 'react';
+
 import { getCurrentUserDoc } from '../services/userService';
+import { getDatabaseErrorMessage } from '../utils/databaseErrors';
+import { toaster } from '../utils/toaster';
 
 export interface UserProfile {
   id: string;
@@ -14,6 +15,7 @@ export interface UserProfile {
 
 export const useProfile = () => {
   const [loading, setLoading] = useState(true);
+
   const [user, setUser] = useState<UserProfile>({
     id: '',
     name: '',
@@ -23,32 +25,38 @@ export const useProfile = () => {
     interests: [],
   });
 
-  const loadUser = useCallback(async (showFullLoader = false) => {
-    if (showFullLoader) {
-      setLoading(true);
-    }
-
-    try {
-      const userDoc = await getCurrentUserDoc();
-
-      if (userDoc?.exists()) {
-        const data = userDoc.data();
-        setUser({
-          id: data.id ?? '',
-          name: data.name ?? '',
-          city: data.city ?? '',
-          profileImage: data.profileImage ?? '',
-          caption: data.caption ?? '',
-          interests: data.interests ?? [],
-        });
+  const loadUser = useCallback(
+    async (showFullLoader = false) => {
+      if (showFullLoader) {
+        setLoading(true);
       }
-    } catch (error) {
-      console.error('Error loading profile:', error);
-      Alert.alert('Error', 'Failed to load profile');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
+      try {
+        const userDoc = await getCurrentUserDoc();
+
+        if (userDoc?.exists()) {
+          const data = userDoc.data();
+
+          setUser({
+            id: data.id ?? '',
+            name: data.name ?? '',
+            city: data.city ?? '',
+            profileImage: data.profileImage ?? '',
+            caption: data.caption ?? '',
+            interests: data.interests ?? [],
+          });
+        }
+      } catch (error) {
+        toaster.error(
+          'Failed to load profile',
+          getDatabaseErrorMessage(error),
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   return {
     user,

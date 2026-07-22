@@ -3,17 +3,19 @@ import { COLORS } from "../../constants/colors";
 import { ms, s, vs } from "../../utils/scaling";
 
 export const styles = StyleSheet.create({
-  container: {
+   container: {
     flex: 1,
     backgroundColor: COLORS.BACKGROUND_LIGHT,
   },
+
   header: {
     fontSize: ms(28),
     fontWeight: '700',
     color: COLORS.BACKGROUND_RED,
     paddingHorizontal: s(20),
-    paddingTop: vs(10),
+    paddingTop: vs(16),
     paddingBottom: vs(20),
+    backgroundColor: COLORS.BACKGROUND_LIGHT,
   },
   listContent: {
     paddingHorizontal: s(16),

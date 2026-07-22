@@ -1,9 +1,16 @@
 // hooks/useProfileEditor.ts
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
-import { getCurrentUserDoc, updateProfile } from '../services/userService';
+import {
+  getCurrentUserDoc,
+  updateProfile,
+} from '../services/userService';
 
-export const useProfileEditor = (onImageLoaded: (url: string) => void) => {
+import { toaster } from '../utils/toaster';
+import { getDatabaseErrorMessage } from '../utils/databaseErrors';
+
+export const useProfileEditor = (
+  onImageLoaded: (url: string) => void,
+) => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -21,50 +28,79 @@ export const useProfileEditor = (onImageLoaded: (url: string) => void) => {
 
         if (!userDoc.exists()) {
           if (isMounted) {
-            Alert.alert('Profile not found', "We couldn't load your profile.");
+            toaster.error(
+              'Profile not found',
+              "We couldn't load your profile.",
+            );
           }
+
           return;
         }
 
         const data = userDoc.data();
-        if (!isMounted) return;
+
+        if (!isMounted) {
+          return;
+        }
 
         onImageLoaded(data?.profileImage || '');
         setName(data?.name || '');
         setCity(data?.city || '');
         setCaption(data?.caption || '');
+
         setInterests(
-          Array.isArray(data?.interests) ? data.interests.join(', ') : '',
+          Array.isArray(data?.interests)
+            ? data.interests.join(', ')
+            : '',
         );
       } catch (error) {
-        console.log('loadUser error', error);
         if (isMounted) {
-          Alert.alert('Error', 'Failed to load profile');
+          toaster.error(
+            'Failed to load profile',
+            getDatabaseErrorMessage(error),
+          );
         }
       } finally {
-        if (isMounted) setInitialLoading(false);
+        if (isMounted) {
+          setInitialLoading(false);
+        }
       }
     };
 
     loadUser();
+
     return () => {
       isMounted = false;
     };
   }, [onImageLoaded]);
 
-  const handleUpdate = async (profileImage: string) => {
-    if (saving) return;
-
-    if (!name.trim()) {
-      Alert.alert('Missing name', 'Please enter your name.');
+  const handleUpdate = async (
+    profileImage: string,
+  ) => {
+    if (saving) {
       return;
     }
+
+    if (!name.trim()) {
+      toaster.error(
+        'Missing name',
+        'Please enter your name.',
+      );
+
+      return;
+    }
+
     if (!city.trim()) {
-      Alert.alert('Missing city', 'Please enter your city.');
+      toaster.error(
+        'Missing city',
+        'Please enter your city.',
+      );
+
       return;
     }
 
     setSaving(true);
+
     try {
       await updateProfile({
         name: name.trim(),
@@ -76,10 +112,16 @@ export const useProfileEditor = (onImageLoaded: (url: string) => void) => {
           .map(item => item.trim())
           .filter(Boolean),
       });
-      Alert.alert('Success', 'Profile updated successfully');
+
+      toaster.success(
+        'Success',
+        'Profile updated successfully',
+      );
     } catch (error) {
-      console.log('updateProfile error', error);
-      Alert.alert('Error', 'Failed to update profile');
+      toaster.error(
+        'Failed to update profile',
+        getDatabaseErrorMessage(error),
+      );
     } finally {
       setSaving(false);
     }

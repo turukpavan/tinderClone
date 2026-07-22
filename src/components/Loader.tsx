@@ -1,5 +1,10 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  ViewStyle,
+} from 'react-native';
 import { COLORS } from '../constants/colors';
 
 interface LoaderProps {
@@ -12,7 +17,7 @@ interface LoaderProps {
 const Loader = ({
   size = 'large',
   color = COLORS.BACKGROUND_RED,
-  backgroundColor = COLORS.BACKGROUND_LIGHT,
+  backgroundColor = 'transparent',
   style,
 }: LoaderProps) => {
   return (
@@ -26,7 +31,7 @@ export default Loader;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex : 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
